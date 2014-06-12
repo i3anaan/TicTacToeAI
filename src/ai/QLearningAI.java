@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QLearningAI implements AI{
@@ -11,6 +12,16 @@ public class QLearningAI implements AI{
 	
 	public int doMove(char[] oldBoard){
 		int bestMove = getBestAction(oldBoard); //Calculate best move
+		if(Math.random()>0.9){	//Randomness for exploration.
+			int moveFound = -1;
+			while(moveFound == -1){
+				int randomMove = (int)(Math.random()*9);
+				if(oldBoard[randomMove]==MARK_EMPTY){
+					moveFound = randomMove;
+				}
+			}
+			bestMove = moveFound;
+		}
 		char[] newBoard = updateBoard(oldBoard, bestMove);	//Play best move on clone board
 		double reward = getReward(oldBoard, newBoard);	//Calculate reward for the transition
 		updateQValue(oldBoard,bestMove,reward);	//Update the QValue for the oldBoard + transition just done.
@@ -34,18 +45,21 @@ public class QLearningAI implements AI{
 	}
 	
 	public int getBestAction(char[] board){
-		int bestAction = Integer.MIN_VALUE;
+		ArrayList<Integer> bestActions = new ArrayList<Integer>();
 		double bestQValue = Double.MIN_VALUE;
 		for(int i=0;i<9;i++){
 			if(board[i]!=MARK_EMPTY){
 				double qValue = getQValue(board, i);
-				if(qValue>bestQValue){
-					bestAction = i;
+				if(qValue==bestQValue){
+					bestActions.add(i);
+				}else if(qValue>bestQValue){
+					bestActions.clear();
+					bestActions.add(i);
 					bestQValue = qValue;
 				}
 			}
 		}
-		return bestAction;
+		return bestActions.get((int)(Math.random()*bestActions.size()));
 	}
 	
 	public char[] updateBoard(char[] board, int move){
