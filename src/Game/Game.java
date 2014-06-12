@@ -47,4 +47,10 @@ public class Game {
 		return board.boardClone();
 	}
 	
+	/** Resets the game */
+	public void resetGame(){
+		board = new Board();
+		turnCount = 0;
+	}
+	
 }
