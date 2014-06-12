@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class QLearningAI implements AI{
 
-	private HashMap<char[],double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
+	private HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
 	private static final double GAMMA = 0.9;		//Used in QValue function.
 	private static final char MARK_PLAYER = 'X';	//The mark this AI has
 	private static final char MARK_EMPTY = ' ';		//Empty place mark
@@ -16,7 +16,7 @@ public class QLearningAI implements AI{
 			int moveFound = -1;
 			while(moveFound == -1){
 				int randomMove = (int)(Math.random()*9);
-				if(oldBoard[randomMove]==MARK_EMPTY){
+				if(oldBoard.getIndex(randomMove)==MARK_EMPTY){
 					moveFound = randomMove;
 				}
 			}
@@ -48,7 +48,7 @@ public class QLearningAI implements AI{
 		ArrayList<Integer> bestActions = new ArrayList<Integer>();
 		double bestQValue = Double.MIN_VALUE;
 		for(int i=0;i<9;i++){
-			if(board.get(i)!=MARK_EMPTY){
+			if(board.getIndex(i)!=MARK_EMPTY){
 				double qValue = getQValue(board, i);
 				if(qValue==bestQValue){
 					bestActions.add(i);
@@ -62,8 +62,8 @@ public class QLearningAI implements AI{
 		return bestActions.get((int)(Math.random()*bestActions.size()));
 	}
 	
-	public char[] updateBoard(char[] board, int move){
-		board.doMove(move) = MARK_PLAYER;
+	public Board updateBoard(Board board, int move){
+		board.doMove(MARK_PLAYER,move);
 		return board;
 	}
 	
