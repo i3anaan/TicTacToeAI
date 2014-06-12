@@ -45,25 +45,38 @@ public class Board {
 
 	/**
 	 * Checks if either players has made a winning move
-	 * @return if someone has won
+	 * @return the winner
 	 */
-	public boolean checkWin(){
+	public char checkWin(){
 
-		if(board[0] == board[1] && board[1] == board [2] ||
-				board[3] == board[4] && board[4] == board[5] ||
-				board[6] == board[7] && board[7] == board[8] ||
+		if(		board[0] == 'X' && board[0] == board[1] && board[1] == board [2] ||
+				board[3] == 'X' && board[3] == board[4] && board[4] == board[5] ||
+				board[6] == 'X' &&	board[6] == board[7] && board[7] == board[8] ||
 
-				board[0] == board[3] && board[3] == board[6] ||
-				board[1] == board[4] && board[4] == board[7] ||
-				board[2] == board[5] && board[5] == board[8] ||
+				board[0] == 'X' &&	board[0] == board[3] && board[3] == board[6] ||
+				board[1] == 'X' &&	board[1] == board[4] && board[4] == board[7] ||
+				board[2] == 'X' &&	board[2] == board[5] && board[5] == board[8] ||
 
-				board[0] == board[4] && board[4] == board[8] ||
-				board[2] == board[4] && board[4] == board[6]){
+				board[0] == 'X' &&	board[0] == board[4] && board[4] == board[8] ||
+				board[2] == 'X' &&	board[2] == board[4] && board[4] == board[6]){
 
-			return true;
+			return 'X';
 		}
-		else {
-			return false;
+		if(		board[0] == 'O' && board[0] == board[1] && board[1] == board [2] ||
+				board[3] == 'O' && board[3] == board[4] && board[4] == board[5] ||
+				board[6] == 'O' &&	board[6] == board[7] && board[7] == board[8] ||
+
+				board[0] == 'O' &&	board[0] == board[3] && board[3] == board[6] ||
+				board[1] == 'O' &&	board[1] == board[4] && board[4] == board[7] ||
+				board[2] == 'O' &&	board[2] == board[5] && board[5] == board[8] ||
+
+				board[0] == 'O' &&	board[0] == board[4] && board[4] == board[8] ||
+				board[2] == 'O' &&	board[2] == board[4] && board[4] == board[6]){
+
+			return 'O';
+		}
+		else{
+			return ' ';
 		}
 	}
 	
