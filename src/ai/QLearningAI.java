@@ -3,6 +3,8 @@ package ai;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Game.Board;
+
 public class QLearningAI implements AI{
 
 	private HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
