@@ -2,12 +2,19 @@ package Game;
 
 public class Board {
 
-	private char[] board = new char[8];
+	private char[] board;
 
 	public Board() {
-
+		board = new char[9];
 		for(int i = 0; i< board.length; i++){
 			board[i] = ' ';
+		}
+	}
+	
+	public Board(char[] grid){
+		board = new char[9];
+		for(int i = 0; i< board.length; i++){
+			board[i] = grid[i];
 		}
 	}
 
@@ -18,9 +25,8 @@ public class Board {
 	 * @param field to perform the move on
 	 */
 	public void doMove(char player, int field){
-		if(board[field] == ' '){
+		if(board[field] == Game.MARK_EMPTY){
 			board[field] = player;
-			System.out.println(toString());
 		}
 		else{
 			System.out.println("ILLEGAL MOVE!!!");
@@ -49,35 +55,39 @@ public class Board {
 	 */
 	public char checkWin(){
 
-		if(		board[0] == 'X' && board[0] == board[1] && board[1] == board [2] ||
-				board[3] == 'X' && board[3] == board[4] && board[4] == board[5] ||
-				board[6] == 'X' &&	board[6] == board[7] && board[7] == board[8] ||
+		if(		board[0] == Game.MARK_PLAYER1 && board[0] == board[1] && board[1] == board [2] ||
+				board[3] == Game.MARK_PLAYER1 && board[3] == board[4] && board[4] == board[5] ||
+				board[6] == Game.MARK_PLAYER1 &&	board[6] == board[7] && board[7] == board[8] ||
 
-				board[0] == 'X' &&	board[0] == board[3] && board[3] == board[6] ||
-				board[1] == 'X' &&	board[1] == board[4] && board[4] == board[7] ||
-				board[2] == 'X' &&	board[2] == board[5] && board[5] == board[8] ||
+				board[0] == Game.MARK_PLAYER1 &&	board[0] == board[3] && board[3] == board[6] ||
+				board[1] == Game.MARK_PLAYER1 &&	board[1] == board[4] && board[4] == board[7] ||
+				board[2] == Game.MARK_PLAYER1 &&	board[2] == board[5] && board[5] == board[8] ||
 
-				board[0] == 'X' &&	board[0] == board[4] && board[4] == board[8] ||
-				board[2] == 'X' &&	board[2] == board[4] && board[4] == board[6]){
+				board[0] == Game.MARK_PLAYER1 &&	board[0] == board[4] && board[4] == board[8] ||
+				board[2] == Game.MARK_PLAYER1 &&	board[2] == board[4] && board[4] == board[6]){
 
-			return 'X';
+			return Game.MARK_PLAYER1;
 		}
-		if(		board[0] == 'O' && board[0] == board[1] && board[1] == board [2] ||
-				board[3] == 'O' && board[3] == board[4] && board[4] == board[5] ||
-				board[6] == 'O' &&	board[6] == board[7] && board[7] == board[8] ||
+		if(		board[0] == Game.MARK_PLAYER2 && board[0] == board[1] && board[1] == board [2] ||
+				board[3] == Game.MARK_PLAYER2 && board[3] == board[4] && board[4] == board[5] ||
+				board[6] == Game.MARK_PLAYER2 &&	board[6] == board[7] && board[7] == board[8] ||
 
-				board[0] == 'O' &&	board[0] == board[3] && board[3] == board[6] ||
-				board[1] == 'O' &&	board[1] == board[4] && board[4] == board[7] ||
-				board[2] == 'O' &&	board[2] == board[5] && board[5] == board[8] ||
+				board[0] == Game.MARK_PLAYER2 &&	board[0] == board[3] && board[3] == board[6] ||
+				board[1] == Game.MARK_PLAYER2 &&	board[1] == board[4] && board[4] == board[7] ||
+				board[2] == Game.MARK_PLAYER2 &&	board[2] == board[5] && board[5] == board[8] ||
 
-				board[0] == 'O' &&	board[0] == board[4] && board[4] == board[8] ||
-				board[2] == 'O' &&	board[2] == board[4] && board[4] == board[6]){
+				board[0] == Game.MARK_PLAYER2 &&	board[0] == board[4] && board[4] == board[8] ||
+				board[2] == Game.MARK_PLAYER2 &&	board[2] == board[4] && board[4] == board[6]){
 
-			return 'O';
+			return Game.MARK_PLAYER2;
 		}
 		else{
-			return ' ';
+			return Game.MARK_EMPTY;
 		}
+	}
+	
+	public boolean checkGameOver(){
+		return checkFull() || checkWin()!=Game.MARK_EMPTY;
 	}
 	
 	/**
@@ -85,15 +95,7 @@ public class Board {
 	 * @return board
 	 */
 	public Board boardClone(){	
-		
-			try {
-				return (Board)this.clone();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-				System.out.println("CANT CLONE BOARD");
-				return null;
-			}
-		
+		return new Board(board);
 	}
 	
 	/**
@@ -110,11 +112,11 @@ public class Board {
 	 */
 	public String toString(){
 
-		String tostring = ("|" + board[0] + "|" + board[1] + "|" + board[2] + "|\n"
-				+"-------"
+		String tostring = ("\n|" + board[0] + "|" + board[1] + "|" + board[2] + "|\n"
+				//+"-------\n"
 				+ "|" + board[3] + "|" + board[4] + "|" + board[5] + "|\n"
-				+"-------"
-				+ "|" + board[6] + "|" + board[7] + "|" + board[8] + "|\n");
+				//+"-------\n"
+				+ "|" + board[6] + "|" + board[7] + "|" + board[8] + "|");
 
 		return tostring;
 	}

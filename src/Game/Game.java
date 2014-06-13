@@ -1,16 +1,62 @@
 package Game;
 
+import player.Player;
+import player.QLearningAI;
+import player.RandomAI;
+
 public class Game {
 
 	private Board board;
 	private int turnCount = 0;
-	private char Xplayer = 'X';
-	private char Oplayer = 'O';
+	public static final char MARK_PLAYER1 = 'X';
+	public static final char MARK_PLAYER2 = 'O';
+	public static final char MARK_EMPTY = ' ';
 	
-	public Game() {
+	private Player player1;
+	private Player player2;
+	
+	public static void main(String[] args){
+		Player player1 = new QLearningAI(MARK_PLAYER1);
+		Player player2 = new RandomAI();
+		int games = 0;
+		int player1Wins = 0;
+		int player2Wins = 0;
 		
-		board = new Board();
+		while(true){
+			Game game = new Game(player1,player2);
+			char winner = game.playGame();
+			games++;
+			if(winner==MARK_PLAYER1){
+				player1Wins++;
+			}else if(winner==MARK_PLAYER2){
+				player2Wins++;
+			}
+			System.out.println("<#GAME OVER#>");
+			System.out.println("Winner: "+winner);
+			System.out.println(String.format("Winrate Player1 (QLearning): %.3f%%\tWinrate Player2 (Random): %.3f%%\tGames:%d",(((double)player1Wins) / ((double)games))*100,(((double)player2Wins) / ((double)games))*100,games));
+		}
+	}
+	
+	
+	public Game(Player p1, Player p2) {
+		this.player1 = p1;
+		this.player2 = p2;
 		//Create game + AI
+		
+		
+	}
+	public char playGame(){
+		board = new Board();
+		while(!(board.checkFull() || board.checkWin()!=MARK_EMPTY)){
+			char turn = getTurnPlayer();
+			if(turn==MARK_PLAYER1){
+				doMove(turn,player1.doMove(board.boardClone()));
+			}else if(turn==MARK_PLAYER2){
+				doMove(turn,player2.doMove(board.boardClone()));
+			}
+		}
+		
+		return board.checkWin();
 	}
 
 	/** performs a move, method will only do the move if it is your turn */
@@ -22,6 +68,7 @@ public class Game {
 		else{
 			System.out.println("ITS NOT YOUR TURN");
 		}
+		//System.out.println(board.toString());
 	}
 	
 	/** returns the turncount*/
@@ -32,10 +79,10 @@ public class Game {
 	/** returns the turn player*/
 	public char getTurnPlayer(){
 		
-		if(turnCount%2 ==0){
-			return Xplayer;
+		if(turnCount%2 == 0){
+			return MARK_PLAYER1;
 		}else{
-			return Oplayer;
+			return MARK_PLAYER2;
 		}
 	}
 	
