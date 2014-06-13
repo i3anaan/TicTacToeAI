@@ -15,4 +15,9 @@ public class RandomAI implements Player{
 		}
 		return moveFound;
 	}
+	
+	@Override
+	public String toString(){
+		return "RandomAI";
+	}
 }

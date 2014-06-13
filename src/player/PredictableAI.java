@@ -14,5 +14,10 @@ public class PredictableAI implements Player {
 		}
 		return -1;
 	}
+	
+	@Override
+	public String toString(){
+		return "PredictableAI";
+	}
 
 }

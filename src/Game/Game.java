@@ -24,7 +24,7 @@ public class Game {
 		int player2Wins = 0;
 		
 		//while(true){
-		for(int i=0;i<10;i++){
+		while(true){
 			Game game = new Game(player1,player2);
 			char winner = game.playGame();
 			games++;
@@ -35,7 +35,7 @@ public class Game {
 			}
 			System.out.println("<#GAME OVER#>");
 			System.out.println("Winner: "+winner);
-			System.out.println(String.format("Winrate Player1 (QLearning): %.3f%%\tWinrate Player2 (Random): %.3f%%\tGames:%d",(((double)player1Wins) / ((double)games))*100,(((double)player2Wins) / ((double)games))*100,games));
+			System.out.println(String.format("Winrate Player1 (%s): %.3f%%\tWinrate Player2 (%s): %.3f%%\tGames:%d",player1.toString(),(((double)player1Wins) / ((double)games))*100,player2.toString(),(((double)player2Wins) / ((double)games))*100,games));
 		}
 	}
 	
