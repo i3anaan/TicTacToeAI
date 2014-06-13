@@ -1,6 +1,7 @@
 package player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import Game.Board;
@@ -11,6 +12,8 @@ public class QLearningAI implements Player{
 	private HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
 	private static final double GAMMA = 0.9;		//Used in QValue function.
 	private char mark;	//The mark this AI has
+	private float movesDone = 0;
+	
 	
 	public QLearningAI(char mark){
 		this.mark = mark;
@@ -18,7 +21,7 @@ public class QLearningAI implements Player{
 	
 	public int doMove(Board oldBoard){
 		int bestMove = getBestAction(oldBoard); //Calculate best move
-		if(Math.random()>0.9){	//Randomness for exploration.
+		if(Math.random()>(movesDone/(movesDone+100000))){	//Randomness for exploration.
 			int moveFound = -1;
 			while(moveFound == -1){
 				int randomMove = (int)(Math.random()*9);
@@ -27,10 +30,12 @@ public class QLearningAI implements Player{
 				}
 			}
 			bestMove = moveFound;
+		}else{
 		}
 		Board newBoard = updateBoard(oldBoard.boardClone(), bestMove);	//Play best move on clone board
 		double reward = getReward(oldBoard, newBoard);	//Calculate reward for the transition
 		updateQValue(oldBoard,bestMove,reward);	//Update the QValue for the oldBoard + transition just done.
+		movesDone++;
 		return bestMove;
 	}
 	
@@ -46,16 +51,21 @@ public class QLearningAI implements Player{
 	
 	public void updateQValue(Board board, int move, double reward){
 		double[] values =knowledge.get(board);
+
+		System.out.println("OldValues = "+Arrays.toString(values));
 		if(values==null){
+			System.out.println("Values == null");
 			values = new double[9];
 		}
 		values[move] = recalculateQValue(board, move, reward);
+		//System.out.println(Arrays.toString(values));
 		knowledge.put(board, values);
 	}
 	
 	public double recalculateQValue(Board board, int move, double reward){
 		Board newBoard = updateBoard(board,move);
 		if(!board.checkGameOver()){
+			System.out.println("value for next state = "+getQValue(newBoard,getBestAction(newBoard)));
 			return reward + GAMMA*getQValue(newBoard,getBestAction(newBoard));
 		}else{
 			return reward + GAMMA*0;

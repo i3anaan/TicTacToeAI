@@ -1,6 +1,7 @@
 package Game;
 
 import player.Player;
+import player.PredictableAI;
 import player.QLearningAI;
 import player.RandomAI;
 
@@ -17,12 +18,13 @@ public class Game {
 	
 	public static void main(String[] args){
 		Player player1 = new QLearningAI(MARK_PLAYER1);
-		Player player2 = new RandomAI();
+		Player player2 = new PredictableAI();
 		int games = 0;
 		int player1Wins = 0;
 		int player2Wins = 0;
 		
-		while(true){
+		//while(true){
+		for(int i=0;i<10;i++){
 			Game game = new Game(player1,player2);
 			char winner = game.playGame();
 			games++;
