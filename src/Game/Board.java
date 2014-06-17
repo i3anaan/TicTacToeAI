@@ -113,7 +113,7 @@ public class Board {
 	public int hashCode(){
 		int value =0;
 		for(int i=0;i<board.length;i++){
-			value = value + board[i]*256*i;
+			value = value*((int)(Math.pow(256, i)));
 		}
 		return value;
 	}
