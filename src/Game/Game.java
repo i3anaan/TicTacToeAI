@@ -18,7 +18,7 @@ public class Game {
 	
 	public static void main(String[] args){
 		Player player1 = new QLearningAI(MARK_PLAYER1);
-		Player player2 = new RandomAI();
+		Player player2 = new PredictableAI();
 		int games = 0;
 		int player1Wins = 0;
 		int player2Wins = 0;

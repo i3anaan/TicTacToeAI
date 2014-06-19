@@ -13,7 +13,7 @@ public class QLearningAI implements Player{
 	//TODO upgrade QLearning met time-varying weighting factor (p270)
 	
 	
-	private HashMap<Integer,double[]> knowledge = new HashMap<Integer,double[]>(); //TODO save this knowledge.
+	private HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
 	private static final double GAMMA = 0.9;		//Used in QValue function.
 	private char mark;	//The mark this AI has
 	private float movesDone = 0;
@@ -46,25 +46,25 @@ public class QLearningAI implements Player{
 	
 	
 	public double getQValue(Board board, int move){
-		double[] arr = knowledge.get(board.hashCode());
+		double[] arr = knowledge.get(board);
 		if(arr==null){
 			arr = new double[9];
-			knowledge.put(board.hashCode(), arr);
+			knowledge.put(board, arr);
 			//System.out.println("No previous Array Found, made new");
 		}else{
 			//System.out.println("Previous entry found");
 		}
 		//System.out.println(knowledge.get(board));
-		return knowledge.get(board.hashCode())[move];
+		return knowledge.get(board)[move];
 	}
 	
 	public void updateQValue(Board board, int move, double reward){
-		double[] values =knowledge.get(board.hashCode());
+		double[] values =knowledge.get(board);
 		if(values==null){
 			values = new double[9];
 		}
 		values[move] = recalculateQValue(board, move, reward);
-		knowledge.put(board.hashCode(), values);
+		knowledge.put(board, values);
 	}
 	
 	public double recalculateQValue(Board board, int move, double reward){

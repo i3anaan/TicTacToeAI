@@ -109,6 +109,7 @@ public class Board {
 		return board[index];
 	}
 	
+	
 	@Override
 	public int hashCode(){
 		int value =0;
@@ -123,23 +124,19 @@ public class Board {
 	public boolean equals(Object object){
 		if(object instanceof Board){
 			Board board2 = (Board) object;
-			System.out.println(Arrays.toString(board2.board));
-			System.out.println(Arrays.toString(board));
-			System.out.println(board2.board.equals(board)); //TODO wtf?
 			boolean same = true;
 			for(int i=0;i<board.length;i++){
-				System.out.println(i);
+				//System.out.println(i);
 				if(board2.board[i]!=this.board[i]){
 					same = false;
 				}
 			}
-			System.out.println(same);
-			System.out.println(board2.board.length==this.board.length);
 			return same;
 		}else{
 			return false;
 		}
 	}
+	
 
 	/**
 	 * Returns the current status of the board
