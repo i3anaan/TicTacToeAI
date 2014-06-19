@@ -9,8 +9,8 @@ import Game.Board;
 import Game.Game;
 
 public class QLearningAI implements Player{
-	//TODO print winrate van laatste 100.000
-	//TODO upgrade QLearning met time-varying weighting factor
+	//TODO print winrate van laatste X aantal mails
+	//TODO upgrade QLearning met time-varying weighting factor (p270)
 	
 	
 	private HashMap<Integer,double[]> knowledge = new HashMap<Integer,double[]>(); //TODO save this knowledge.
