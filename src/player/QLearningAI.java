@@ -9,7 +9,10 @@ import Game.Board;
 import Game.Game;
 
 public class QLearningAI implements Player{
-
+	//TODO print winrate van laatste 100.000
+	//TODO upgrade QLearning met time-varying weighting factor
+	
+	
 	private HashMap<Integer,double[]> knowledge = new HashMap<Integer,double[]>(); //TODO save this knowledge.
 	private static final double GAMMA = 0.9;		//Used in QValue function.
 	private char mark;	//The mark this AI has
