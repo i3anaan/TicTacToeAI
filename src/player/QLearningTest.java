@@ -45,7 +45,7 @@ public class QLearningTest {
 		assertTrue(arr1!=arr2);
 		assertTrue(board1!=board2);
 		assertFalse(board1.equals(board2));
-		assertEquals(board1.hashCode(),board2.hashCode());
+		//assertEquals(board1.hashCode(),board2.hashCode());
 		map2.put(board1,arr1);
 		map2.put(board2, arr2);
 		assertEquals(map2.get(board1),arr1);

@@ -116,7 +116,8 @@ public class Board {
 		for(int i=0;i<board.length;i++){
 			value = value + board[i]*((int)(Math.pow(256, i)));
 		}
-		return value;
+		//return value;
+		return Arrays.hashCode(board);
 	}
 	
 	
