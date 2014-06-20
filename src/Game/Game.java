@@ -1,5 +1,6 @@
 package Game;
 
+import player.PersistentQLearningAI;
 import player.Player;
 import player.PredictableAI;
 import player.QLearningAI;
@@ -17,8 +18,8 @@ public class Game {
 	private Player player2;
 	
 	public static void main(String[] args){
-		Player player1 = new QLearningAI(MARK_PLAYER1);
-		Player player2 = new PredictableAI();
+		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,true);
+		Player player2 = new RandomAI();
 		int games = 0;
 		int player1Wins = 0;
 		int player2Wins = 0;
@@ -33,9 +34,11 @@ public class Game {
 			}else if(winner==MARK_PLAYER2){
 				player2Wins++;
 			}
-			System.out.println("<#GAME OVER#>");
-			System.out.println("Winner: "+winner);
-			System.out.println(String.format("Winrate Player1 (%s): %.3f%%\tWinrate Player2 (%s): %.3f%%\tGames:%d",player1.toString(),(((double)player1Wins) / ((double)games))*100,player2.toString(),(((double)player2Wins) / ((double)games))*100,games));
+			if(games%5000==0){
+				//System.out.println("<#GAME OVER#>");
+				//System.out.println("Winner: "+winner);
+				System.out.println(String.format("Winrate Player1 (%s): %.3f%%\tWinrate Player2 (%s): %.3f%%\tGames:%d",player1.toString(),(((double)player1Wins) / ((double)games))*100,player2.toString(),(((double)player2Wins) / ((double)games))*100,games));
+			}
 		}
 	}
 	

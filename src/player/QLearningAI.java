@@ -13,10 +13,10 @@ public class QLearningAI implements Player{
 	//TODO upgrade QLearning met time-varying weighting factor (p270)
 	
 	
-	private HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
+	protected HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
 	private static final double GAMMA = 0.9;		//Used in QValue function.
 	private char mark;	//The mark this AI has
-	private float movesDone = 0;
+	protected float movesDone = 0;
 	
 	
 	public QLearningAI(char mark){
