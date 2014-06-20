@@ -25,8 +25,8 @@ public class QLearningAI implements Player{
 	
 	public int doMove(Board oldBoard){
 		int bestMove = getBestAction(oldBoard); //Calculate best move
-		if(Math.random()>(movesDone/(movesDone+100000))){	//Randomness for exploration.
-		//if(Math.random()>0.8){	//Randomness for exploration.
+		//if(Math.random()>(movesDone/(movesDone+100000))){	//Randomness for exploration.
+		/*if(Math.random()>0.8){	//Randomness for exploration.
 			int moveFound = -1;
 			while(moveFound == -1){
 				int randomMove = (int)(Math.random()*9);
@@ -36,7 +36,7 @@ public class QLearningAI implements Player{
 			}
 			bestMove = moveFound;
 		}else{
-		}
+		}*/
 		Board newBoard = updateBoard(oldBoard.boardClone(), bestMove);	//Play best move on clone board
 		double reward = getReward(oldBoard, newBoard);	//Calculate reward for the transition
 		updateQValue(oldBoard,bestMove,reward);	//Update the QValue for the oldBoard + transition just done.
@@ -54,7 +54,7 @@ public class QLearningAI implements Player{
 		}else{
 			//System.out.println("Previous entry found");
 		}
-		//System.out.println(knowledge.get(board));
+		//System.out.println(Arrays.toString(knowledge.get(board)));
 		return knowledge.get(board)[move];
 	}
 	
@@ -64,6 +64,7 @@ public class QLearningAI implements Player{
 			values = new double[9];
 		}
 		values[move] = recalculateQValue(board, move, reward);
+		//System.out.println(Arrays.toString(values));
 		knowledge.put(board, values);
 	}
 	
@@ -73,8 +74,11 @@ public class QLearningAI implements Player{
 			if(getQValue(newBoard,getBestAction(newBoard))>0){
 				//System.out.println("QVALUE EXISTING VALUE DETECTED");
 			}
-			//System.out.println("value for next state = "+getQValue(newBoard,getBestAction(newBoard)));
-			return reward + GAMMA*getQValue(newBoard,getBestAction(newBoard));
+			double qValue = getQValue(newBoard,getBestAction(newBoard));
+			if(qValue>0){
+				System.out.println("value for next state = "+qValue);
+			}
+			return reward + GAMMA*qValue;
 		}else{
 			return reward + GAMMA*0;
 		}

@@ -57,6 +57,9 @@ public class PersistentQLearningAI extends QLearningAI {
 	}
 
 	private void storeHashMap(HashMap<Board, double[]> map) throws IOException {
+		//for(Board b : map.keySet()){
+		//	System.out.println(Arrays.toString(map.get(b)));
+		//}
 		FileOutputStream fileOut = new FileOutputStream("QLearningKnowledge.ai");
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(map);
