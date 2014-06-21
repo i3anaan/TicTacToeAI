@@ -97,7 +97,7 @@ public class Board implements Serializable{
 	 * returns a clone of this board
 	 * @return board
 	 */
-	public Board boardClone(){	
+	public Board getClone(){	
 		return new Board(board);
 	}
 	

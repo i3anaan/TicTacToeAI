@@ -18,7 +18,8 @@ public class PersistentQLearningAI extends QLearningAI {
 		this.save =save;
 		try {
 			knowledge = loadHashMap();
-			System.out.println(Arrays.toString(knowledge.get(new Board())));
+			System.out.println("Starting values:  "+Arrays.toString(knowledge.get(new Board())));
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -26,6 +27,15 @@ public class PersistentQLearningAI extends QLearningAI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Board movesDoneBoard = new Board();
+		for(int i=0;i<9;i++){
+			movesDoneBoard.doMove(mark, i);
+		}
+		double[] arr = knowledge.get(movesDoneBoard);
+		if(arr!=null){
+			movesDone = (int) arr[0];
+		}
+		System.out.println("MovesDone: "+movesDone);
 	}
 	
 	@Override
@@ -57,9 +67,13 @@ public class PersistentQLearningAI extends QLearningAI {
 	}
 
 	private void storeHashMap(HashMap<Board, double[]> map) throws IOException {
-		//for(Board b : map.keySet()){
-		//	System.out.println(Arrays.toString(map.get(b)));
-		//}
+		Board movesDoneBoard = new Board();
+		for(int i=0;i<9;i++){
+			movesDoneBoard.doMove(mark, i);
+		}
+		double[] arr = new double[]{movesDone,0,0,0,0,0,0,0,0};
+		knowledge.put(movesDoneBoard, arr);
+		
 		FileOutputStream fileOut = new FileOutputStream("QLearningKnowledge.ai");
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(map);

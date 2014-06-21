@@ -13,6 +13,7 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import Game.Board;
+import Game.Game;
 
 public class QLearningTest {
 
@@ -21,8 +22,6 @@ public class QLearningTest {
 		QLearningAI ai = new QLearningAI('X');
 		Board board = new Board();
 		Board board2 = new Board();
-		// assertEquals(board,board2);
-		// assertEquals(board.hashCode(),board2.hashCode());
 		assertEquals(board.hashCode(), (new Board()).hashCode());
 		ai.updateQValue(board, 1, 2);
 		ai.updateQValue(board2, 1, 2);
@@ -75,10 +74,10 @@ public class QLearningTest {
 		board2.doMove('X', 3);
 		map.put(board2, new double[] { 2 });
 
-		/*
+		
 		try {
 			FileOutputStream fileOut = new FileOutputStream(
-					"QLearningKnowledge.ai");
+					"QLearningKnowledgeTest.ai");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(map);
 			out.close();
@@ -87,12 +86,12 @@ public class QLearningTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		 */
+		
 		map.clear();
 		
 		try {
 			FileInputStream fileIn = new FileInputStream(
-					"QLearningKnowledge.ai");
+					"QLearningKnowledgeTest.ai");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			map = (HashMap<Board, double[]>) in.readObject();
 			in.close();
@@ -107,10 +106,68 @@ public class QLearningTest {
 			return;
 		}
 
-		//assertEquals(1,map.get(new Board())[0],0.1);
-		//assertEquals(2, map.get(board2)[0],0.1);
-		for(Board b : map.keySet()){
-			System.out.println(Arrays.toString(map.get(b)));
-		}
+		assertEquals(1,map.get(new Board())[0],0.1);
+		assertEquals(2, map.get(board2)[0],0.1);
+	}
+	
+	
+	@Test
+	public void testQValueAlgorithm(){
+		Board board = new Board();
+		char mark = 'X';
+		QLearningAI ai = new QLearningAI(mark);
+		assertEquals(Game.MARK_EMPTY,board.getIndex(3));
+		ai.updateBoard(board, 3);
+		assertEquals(mark,board.getIndex(3));
+		
+		Board board1 = new Board();
+		board1.doMove(mark, 0);
+		board1.doMove(mark, 1);
+		Board board2 = board1.getClone();
+		board2.doMove(mark,2);
+		
+		
+		assertEquals(20,ai.getReward(board1, board2),0.1);
+		QLearningAI ai2 = new QLearningAI('R');
+		assertEquals(0,ai2.getReward(board1, board2),0.1);
+		
+		
+		
+		//System.out.println("\n\n\nTESTING STORING QVALUES");
+		ai = new QLearningAI(mark);
+		assertEquals(10, ai.recalculateQValue(new Board(), 3, 10),0.1);
+		board = new Board();
+		board.doMove(mark, 0);
+		//System.out.println("Made board:\n"+board);
+		ai.updateQValue(board, 1, 100);
+		ai.updateQValue(new Board(), 0, 0);
+		assertEquals(100,ai.knowledge.get(board)[1],0.1);
+		assertEquals(100*ai.GAMMA,ai.getQValue(new Board(), 0),0.1);
+		
+		
+		ai = new QLearningAI(mark);
+		Board boardWon = new Board();
+		boardWon.doMove(mark, 0);
+		boardWon.doMove(mark, 1);
+		boardWon.doMove(mark, 2);
+		Board board2Moves = new Board();
+		board2Moves.doMove(mark, 0);
+		board2Moves.doMove(mark, 1);
+		Board board1Moves = new Board();
+		board1Moves.doMove(mark, 0);
+		Board boardEmpty = new Board();
+		ai.updateQValue(board2Moves, 2, ai.getReward(board2Moves, boardWon));
+		ai.updateQValue(board1Moves, 1, ai.getReward(board1Moves, board2Moves));
+		ai.updateQValue(boardEmpty, 0, ai.getReward(boardEmpty, board1Moves));
+		System.out.println(Arrays.toString(ai.knowledge.get(boardWon)));
+		System.out.println(Arrays.toString(ai.knowledge.get(board2Moves)));
+		System.out.println(Arrays.toString(ai.knowledge.get(board1Moves)));
+		System.out.println(Arrays.toString(ai.knowledge.get(boardEmpty)));
+		
+		assertEquals(ai.getReward(board2Moves, boardWon),ai.knowledge.get(board2Moves)[2],0.1);
+		assertEquals(ai.GAMMA*ai.getReward(board2Moves, boardWon),ai.knowledge.get( board1Moves)[1],0.1);
+		assertEquals(ai.GAMMA*ai.GAMMA*ai.getReward(board2Moves, boardWon),ai.knowledge.get(boardEmpty)[0],0.1);
+		
+		
 	}
 }

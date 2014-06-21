@@ -8,6 +8,7 @@ import player.RandomAI;
 
 public class Game {
 
+	public static final int GAMES_TO_PLAY = 10000000;
 	private Board board;
 	private int turnCount = 0;
 	public static final char MARK_PLAYER1 = 'X';
@@ -24,8 +25,7 @@ public class Game {
 		int player1Wins = 0;
 		int player2Wins = 0;
 		
-		//while(true){
-		while(true){
+		for(int i = 0;i<GAMES_TO_PLAY;i++){
 			Game game = new Game(player1,player2);
 			char winner = game.playGame();
 			games++;
@@ -55,9 +55,9 @@ public class Game {
 		while(!(board.checkFull() || board.checkWin()!=MARK_EMPTY)){
 			char turn = getTurnPlayer();
 			if(turn==MARK_PLAYER1){
-				doMove(turn,player1.doMove(board.boardClone()));
+				doMove(turn,player1.doMove(board.getClone()));
 			}else if(turn==MARK_PLAYER2){
-				doMove(turn,player2.doMove(board.boardClone()));
+				doMove(turn,player2.doMove(board.getClone()));
 			}
 		}
 		
@@ -96,7 +96,7 @@ public class Game {
 	 * @return a clone of the current board
 	 */
 	public Board getBoard(){
-		return board.boardClone();
+		return board.getClone();
 	}
 	
 	/** Resets the game */

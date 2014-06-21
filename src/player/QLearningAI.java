@@ -13,20 +13,21 @@ public class QLearningAI implements Player{
 	//TODO upgrade QLearning met time-varying weighting factor (p270)
 	
 	
-	protected HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
-	private static final double GAMMA = 0.9;		//Used in QValue function.
-	private char mark;	//The mark this AI has
+	public HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
+	public static final double GAMMA = 0.9;		//Used in QValue function.
+	public static final int EXPLORATION_FACTOR = 1000000; //1.000.000 = after 10.000.000 games 10% at random move
+	protected char mark;	//The mark this AI has
 	protected float movesDone = 0;
 	
 	
 	public QLearningAI(char mark){
 		this.mark = mark;
+		System.out.println("QLearning, MARK = "+mark);
 	}
 	
 	public int doMove(Board oldBoard){
 		int bestMove = getBestAction(oldBoard); //Calculate best move
-		//if(Math.random()>(movesDone/(movesDone+100000))){	//Randomness for exploration.
-		/*if(Math.random()>0.8){	//Randomness for exploration.
+		if(Math.random()>(movesDone/(movesDone+EXPLORATION_FACTOR))){	//Randomness for exploration.
 			int moveFound = -1;
 			while(moveFound == -1){
 				int randomMove = (int)(Math.random()*9);
@@ -36,8 +37,9 @@ public class QLearningAI implements Player{
 			}
 			bestMove = moveFound;
 		}else{
-		}*/
-		Board newBoard = updateBoard(oldBoard.boardClone(), bestMove);	//Play best move on clone board
+		}
+		Board newBoard = oldBoard.getClone();
+		updateBoard(newBoard, bestMove);	//Play best move on clone board
 		double reward = getReward(oldBoard, newBoard);	//Calculate reward for the transition
 		updateQValue(oldBoard,bestMove,reward);	//Update the QValue for the oldBoard + transition just done.
 		movesDone++;
@@ -50,11 +52,7 @@ public class QLearningAI implements Player{
 		if(arr==null){
 			arr = new double[9];
 			knowledge.put(board, arr);
-			//System.out.println("No previous Array Found, made new");
-		}else{
-			//System.out.println("Previous entry found");
 		}
-		//System.out.println(Arrays.toString(knowledge.get(board)));
 		return knowledge.get(board)[move];
 	}
 	
@@ -64,16 +62,13 @@ public class QLearningAI implements Player{
 			values = new double[9];
 		}
 		values[move] = recalculateQValue(board, move, reward);
-		//System.out.println(Arrays.toString(values));
 		knowledge.put(board, values);
 	}
 	
 	public double recalculateQValue(Board board, int move, double reward){
-		Board newBoard = updateBoard(board.boardClone(),move);
-		if(!newBoard.checkGameOver()){
-			if(getQValue(newBoard,getBestAction(newBoard))>0){
-				//System.out.println("QVALUE EXISTING VALUE DETECTED");
-			}
+		Board newBoard = board.getClone();
+		updateBoard(newBoard,move);
+		if(!newBoard.checkGameOver()){			
 			double qValue = getQValue(newBoard,getBestAction(newBoard));
 			if(qValue>0){
 				System.out.println("value for next state = "+qValue);
@@ -91,15 +86,11 @@ public class QLearningAI implements Player{
 	 * @return
 	 */
 	public int getBestAction(Board board){
-		//System.out.println("getBestAction()");
-		//System.out.println(board);
 		ArrayList<Integer> bestActions = new ArrayList<Integer>();
 		double bestQValue = -Double.MAX_VALUE;
 		for(int i=0;i<9;i++){
 			if(board.getIndex(i)==Game.MARK_EMPTY){
-				//System.out.println(bestActions);
 				double qValue = getQValue(board, i);
-				//System.out.println(qValue);
 				if(qValue==bestQValue){
 					bestActions.add(i);
 				}else if(qValue>bestQValue){
@@ -113,18 +104,29 @@ public class QLearningAI implements Player{
 		return bestActions.get((int)(Math.random()*bestActions.size()));
 	}
 	
-	public Board updateBoard(Board board, int move){
+	public void updateBoard(Board board, int move){
 		board.doMove(mark,move);
-		return board;
 	}
 	
 	public double getReward(Board boardOld, Board boardNew){
-		if(boardOld.checkWin()==Game.MARK_EMPTY && boardNew.checkWin()==Game.MARK_PLAYER1){
-			return 20;
-		}else if(boardOld.checkWin()==Game.MARK_EMPTY && boardNew.checkWin()==Game.MARK_PLAYER2){
-			return 0;
+		if(!boardOld.checkGameOver()){
+			if(boardNew.checkGameOver()){
+				if(boardNew.checkWin()==mark){
+					//Win
+					return 20;
+				}else{
+					//Loss or Draw
+					return 0;
+				}
+			}else{
+				//Game still in progress.
+				return 0;
+			}
+		}else{
+			//Error, boardOld already full.
+			System.err.println("SHOULD NEVER HAPPEN");
+			return -1;
 		}
-		return 0;
 	}
 	
 	@Override
