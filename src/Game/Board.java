@@ -33,6 +33,9 @@ public class Board implements Serializable{
 		}
 		else{
 			System.out.println("ILLEGAL MOVE!!!");
+			System.out.println("Trying move: "+field+"  for player: "+player);
+			System.out.println(this);
+			throw new NullPointerException();
 		}
 	}
 

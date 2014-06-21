@@ -13,35 +13,41 @@ import Game.Board;
 public class PersistentQLearningAI extends QLearningAI {
 
 	private boolean save;
-	public PersistentQLearningAI(char mark,boolean save) {
+	private boolean load;
+
+	public PersistentQLearningAI(char mark, boolean load, boolean save) {
 		super(mark);
-		this.save =save;
-		try {
-			knowledge = loadHashMap();
-			System.out.println("Starting values:  "+Arrays.toString(knowledge.get(new Board())));
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		this.save = save;
+		this.load = load;
+		if (load) {
+			try {
+				knowledge = loadHashMap();
+				System.out.println("Starting values:  "
+						+ Arrays.toString(knowledge.get(new Board())));
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Board movesDoneBoard = new Board();
+			for (int i = 0; i < 9; i++) {
+				movesDoneBoard.doMove(mark, i);
+			}
+			double[] arr = knowledge.get(movesDoneBoard);
+			if (arr != null) {
+				movesDone = (int) arr[0];
+			}
 		}
-		Board movesDoneBoard = new Board();
-		for(int i=0;i<9;i++){
-			movesDoneBoard.doMove(mark, i);
-		}
-		double[] arr = knowledge.get(movesDoneBoard);
-		if(arr!=null){
-			movesDone = (int) arr[0];
-		}
-		System.out.println("MovesDone: "+movesDone);
+		System.out.println("MovesDone: " + movesDone);
 	}
-	
+
 	@Override
-	public int doMove(Board oldBoard){
+	public int doMove(Board oldBoard) {
 		int move = super.doMove(oldBoard);
-		if(save && movesDone%10000==0){
+		if (save && movesDone % 10000 == 0) {
 			try {
 				storeHashMap(knowledge);
 			} catch (IOException e) {
@@ -49,7 +55,7 @@ public class PersistentQLearningAI extends QLearningAI {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return move;
 	}
 
@@ -68,12 +74,12 @@ public class PersistentQLearningAI extends QLearningAI {
 
 	private void storeHashMap(HashMap<Board, double[]> map) throws IOException {
 		Board movesDoneBoard = new Board();
-		for(int i=0;i<9;i++){
+		for (int i = 0; i < 9; i++) {
 			movesDoneBoard.doMove(mark, i);
 		}
-		double[] arr = new double[]{movesDone,0,0,0,0,0,0,0,0};
+		double[] arr = new double[] { movesDone, 0, 0, 0, 0, 0, 0, 0, 0 };
 		knowledge.put(movesDoneBoard, arr);
-		
+
 		FileOutputStream fileOut = new FileOutputStream("QLearningKnowledge.ai");
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(map);

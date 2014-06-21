@@ -8,7 +8,7 @@ import player.RandomAI;
 
 public class Game {
 
-	public static final int GAMES_TO_PLAY = 10000000;
+	public static final int GAMES_TO_PLAY = 25000;
 	private Board board;
 	private int turnCount = 0;
 	public static final char MARK_PLAYER1 = 'X';
@@ -19,7 +19,7 @@ public class Game {
 	private Player player2;
 	
 	public static void main(String[] args){
-		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,true);
+		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,true,true);
 		Player player2 = new RandomAI();
 		int games = 0;
 		int player1Wins = 0;
