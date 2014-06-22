@@ -38,6 +38,8 @@ public class HumanPlayer implements Player {
 
 	@Override
 	public void endOfGame(Board board) {
+		System.out.println("Game over, winning mark: "+board.getWinner());
+		System.out.println(board);
 	}
 
 	@Override

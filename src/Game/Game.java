@@ -1,5 +1,6 @@
 package Game;
 
+import player.HumanPlayer;
 import player.PersistentQLearningAI;
 import player.Player;
 import player.PredictableAI;
@@ -20,9 +21,12 @@ public class Game {
 	
 	public static void main(String[] args){
 		System.out.println("TicTacToe, playing "+GAMES_TO_PLAY+" games.");
-		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,false,true);
-		Player player2 = new PredictableAI();
-		//Player player2 = new RandomAI();
+		//Player player1 = new PersistentQLearningAI(MARK_PLAYER1,true,true);
+		Player player1 = new QLearningAI(MARK_PLAYER1);
+		//Player player2 = new PredictableAI();
+		Player player2 = new RandomAI();
+		//Player player2 = new HumanPlayer();
+		//Player player2 = new QLearningAI(MARK_PLAYER2);
 		int games = 0;
 		int player1Wins = 0;
 		int player2Wins = 0;
