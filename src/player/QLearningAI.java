@@ -15,53 +15,78 @@ public class QLearningAI implements Player{
 	
 	public HashMap<Board,double[]> knowledge = new HashMap<Board,double[]>(); //TODO save this knowledge.
 	public static final double GAMMA = 0.9;		//Used in QValue function.
-	public static final int EXPLORATION_FACTOR = 1000; //10xEXPLORATION_FACTOR moves 10% chance at random move
+	public static final int EXPLORATION_FACTOR = 1000; //10xEXPLORATION_FACTOR moves = 10% chance at random move
 	protected char mark;	//The mark this AI has
-	private int markMultiplier;
 	protected double movesDone = 0;
+	protected Board previousBoard;
+	protected int previousMove;
+	protected boolean startOfGame;
 	
 	
 	public QLearningAI(char mark){
 		this.mark = mark;
-		markMultiplier = mark==Game.MARK_PLAYER1 ? 1 : -1;
 		System.out.println("QLearning, MARK = "+mark);
 	}
 	
-	public int doMove(Board oldBoard){
-		int bestMove = getBestAction(oldBoard); //Calculate best move
-		movesDone++;
+	public int doMove(Board board){
+		int bestMove = getBestAction(board); //Calculate best move
+		
+		//Update QValue from previous move.
+		//This is done in the next doMove() call, as it only now knows the result state of the action done.
+		if(!startOfGame){//Ignore first move.
+			updateQValues(board, bestMove);
+		}
+		
+		
+		//Randomness for exploration.
+		if(Math.random()>(movesDone/(movesDone+EXPLORATION_FACTOR))){
+			int randomMoveFound = -1;
+			while(randomMoveFound == -1){
+				int randomMove = (int)(Math.random()*9);
+				if(board.getIndex(randomMove)==Game.MARK_EMPTY){
+					randomMoveFound=randomMove;
+				}
+			}
+			bestMove = randomMoveFound;
+		}
+		
+		//Save state and action information for next round
+		previousBoard = board.getClone();
+		previousMove = bestMove;
+		//Save amount of moves done (used to determine explore rate)
+		movesDone++;		
+		startOfGame = false;
+		
+		//return the chosen move (best or random)
 		return bestMove;
+	}
+	
+	private double[] getQValues(Board board){
+		double[] arr = knowledge.get(board);
+		if(arr==null){
+			arr = new double[]{0,0,0,0,0,0,0,0,0};
+		}
+		return arr;
+	}
+	
+	private void updateQValues(Board board, int bestMove){
+		double[] qValuesPrevious = getQValues(previousBoard);
+		qValuesPrevious[previousMove] = getReward(previousBoard, board) + GAMMA*getQValues(board)[bestMove];
+		knowledge.put(previousBoard, qValuesPrevious);
+	}
+	
+	public void endOfGame(Board board){
+		updateQValues(board,0);
+		//0 can be given as the QValues of a gameOver-Board will all be 0;
+	}
+	
+	public void startOfGame(){
+		startOfGame = true;
 	}
 	
 	
 	public double getQValue(Board board, int move){
-		double maxQ2 = -Double.MAX_VALUE;
-		for(int opp = 0;opp<9;opp++){
-			if(board.getIndex(opp)==Game.MARK_EMPTY){
-				Board newBoard = board.getClone();
-				newBoard.doMove(mark==Game.MARK_PLAYER1 ? Game.MARK_PLAYER2 : Game.MARK_PLAYER1, opp);
-				double maxQ = -Double.MAX_VALUE;
-				for(int i=0;i<9;i++){
-					if(newBoard.getIndex(i)==Game.MARK_EMPTY){
-						Board newNewBoard = newBoard.getClone();
-						newNewBoard.doMove(mark, i);
-						double[] arr = knowledge.get(newNewBoard);
-						if(arr==null){
-							arr = new double[]{0,0,0,0,0,0,0,0,0};
-						}
-						double tempQ = arr[i];
-						
-						if(tempQ>maxQ){
-							maxQ = tempQ;
-						}
-					}
-				}
-				if(maxQ>maxQ2){
-					maxQ2 = maxQ;
-				}
-			}
-		}
-		return getReward(board,move) + GAMMA * maxQ2;
+		return getQValues(board)[move];
 	}
 	
 	/**
@@ -73,11 +98,9 @@ public class QLearningAI implements Player{
 	public int getBestAction(Board board){
 		ArrayList<Integer> bestActions = new ArrayList<Integer>();
 		double bestQValue = -Double.MAX_VALUE;
-		double[] qValues = new double[9];
 		for(int i=0;i<9;i++){
 			if(board.getIndex(i)==Game.MARK_EMPTY){
 				double qValue = getQValue(board, i);
-				qValues[i] = qValue;
 				if(qValue==bestQValue){
 					bestActions.add(i);
 				}else if(qValue>bestQValue){
@@ -85,40 +108,19 @@ public class QLearningAI implements Player{
 					bestActions.add(i);
 					bestQValue = qValue;
 				}
-			}else{
-				qValues[i] = 0;
 			}
 		}
-		knowledge.put(board,qValues);
-		
-		if(Math.random()>(movesDone/(movesDone+EXPLORATION_FACTOR))){	//Randomness for exploration.
-			int randomMoveFound = -1;
-			while(randomMoveFound == -1){
-				int randomMove = (int)(Math.random()*9);
-				if(board.getIndex(randomMove)==Game.MARK_EMPTY){
-					randomMoveFound=randomMove;
-				}
-			}
-			return randomMoveFound;
-		}else{
-			return bestActions.get((int)(Math.random()*bestActions.size()));
-		}
+		return bestActions.get((int)(Math.random()*bestActions.size()));
 	}
 	
-	public void updateBoard(Board board, int move){
-		board.doMove(mark,move);
-	}
-	
-	public double getReward(Board boardOld, int move){
-		Board boardNew = boardOld.getClone();
-		boardNew.doMove(mark, move);
+	public double getReward(Board boardOld, Board boardNew){
 		
-		if(!boardOld.checkGameOver()){
-			if(boardNew.checkGameOver()){
-				if(boardNew.checkWin()==mark){
+		if(!boardOld.isGameOver()){
+			if(boardNew.isGameOver()){
+				if(boardNew.getWinner()==mark){
 					//Win
 					return 20;
-				}else if(boardNew.checkWin()!=Game.MARK_EMPTY){
+				}else if(boardNew.getWinner()!=Game.MARK_EMPTY){
 					//Loss
 					return -20;
 				}else{

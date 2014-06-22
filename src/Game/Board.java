@@ -43,7 +43,7 @@ public class Board implements Serializable{
 	 * Checks if the board is full or not
 	 * @return full status
 	 */
-	public boolean checkFull(){
+	public boolean isFull(){
 
 		boolean full = true;
 
@@ -59,7 +59,7 @@ public class Board implements Serializable{
 	 * Checks if either players has made a winning move
 	 * @return the winner
 	 */
-	public char checkWin(){
+	public char getWinner(){
 
 		if(		board[0] == Game.MARK_PLAYER1 && board[0] == board[1] && board[1] == board [2] ||
 				board[3] == Game.MARK_PLAYER1 && board[3] == board[4] && board[4] == board[5] ||
@@ -92,8 +92,19 @@ public class Board implements Serializable{
 		}
 	}
 	
-	public boolean checkGameOver(){
-		return checkFull() || checkWin()!=Game.MARK_EMPTY;
+	public int getEmptyAmount(){
+		int empty = 0;
+		for(int i=0;i<9;i++){
+			if(board[i]==Game.MARK_EMPTY){
+				empty++;
+			}
+		}
+		return empty;
+	}
+	
+	
+	public boolean isGameOver(){
+		return isFull() || getWinner()!=Game.MARK_EMPTY;
 	}
 	
 	/**

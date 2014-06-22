@@ -20,4 +20,12 @@ public class RandomAI implements Player{
 	public String toString(){
 		return "RandomAI";
 	}
+
+	@Override
+	public void endOfGame(Board board) {
+	}
+
+	@Override
+	public void startOfGame() {
+	}
 }

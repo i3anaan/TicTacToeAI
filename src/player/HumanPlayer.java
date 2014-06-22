@@ -28,4 +28,12 @@ public class HumanPlayer implements Player {
 		return move;
 	}
 
+	@Override
+	public void endOfGame(Board board) {
+	}
+
+	@Override
+	public void startOfGame() {
+	}
+
 }

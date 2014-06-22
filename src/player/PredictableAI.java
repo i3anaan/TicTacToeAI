@@ -20,4 +20,12 @@ public class PredictableAI implements Player {
 		return "PredictableAI";
 	}
 
+	@Override
+	public void endOfGame(Board board) {
+	}
+
+	@Override
+	public void startOfGame() {
+	}
+
 }

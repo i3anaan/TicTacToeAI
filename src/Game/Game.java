@@ -8,7 +8,7 @@ import player.RandomAI;
 
 public class Game {
 
-	public static final int GAMES_TO_PLAY = 25000;
+	public static final int GAMES_TO_PLAY = 250000;
 	private Board board;
 	private int turnCount = 0;
 	public static final char MARK_PLAYER1 = 'X';
@@ -19,15 +19,21 @@ public class Game {
 	private Player player2;
 	
 	public static void main(String[] args){
-		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,true,true);
-		Player player2 = new RandomAI();
+		Player player1 = new PersistentQLearningAI(MARK_PLAYER1,false,true);
+		Player player2 = new PredictableAI();
 		int games = 0;
 		int player1Wins = 0;
 		int player2Wins = 0;
 		
 		for(int i = 0;i<GAMES_TO_PLAY;i++){
 			Game game = new Game(player1,player2);
+			
+			player1.startOfGame();
+			player2.startOfGame();
 			char winner = game.playGame();
+			player1.endOfGame(game.board);
+			player2.endOfGame(game.board);
+			
 			games++;
 			if(winner==MARK_PLAYER1){
 				player1Wins++;
@@ -52,7 +58,7 @@ public class Game {
 	}
 	public char playGame(){
 		board = new Board();
-		while(!(board.checkFull() || board.checkWin()!=MARK_EMPTY)){
+		while(!(board.isFull() || board.getWinner()!=MARK_EMPTY)){
 			char turn = getTurnPlayer();
 			if(turn==MARK_PLAYER1){
 				doMove(turn,player1.doMove(board.getClone()));
@@ -61,7 +67,7 @@ public class Game {
 			}
 		}
 		
-		return board.checkWin();
+		return board.getWinner();
 	}
 
 	/** performs a move, method will only do the move if it is your turn */
