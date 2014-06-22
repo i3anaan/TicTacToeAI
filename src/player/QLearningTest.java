@@ -33,7 +33,6 @@ public class QLearningTest {
 		assertTrue(arr1 != arr2);
 		assertTrue(board1 != board2);
 		assertFalse(board1.equals(board2));
-		// assertEquals(board1.hashCode(),board2.hashCode());
 		map2.put(board1, arr1);
 		map2.put(board2, arr2);
 		assertEquals(map2.get(board1), arr1);
@@ -110,11 +109,11 @@ public class QLearningTest {
 		
 		assertEquals(20,ai.getReward(board1, board2),0.1);
 		QLearningAI ai2 = new QLearningAI(Game.MARK_PLAYER2);
-		assertEquals(20,ai2.getReward(board1, board2),0.1);
+		assertEquals(-20,ai2.getReward(board1, board2),0.1);
 		
-		ai.knowledge.put(new Board(), new double[]{0,0,0,5,0,0,4,0});
+		ai.knowledge.put(new Board(), new double[]{0,0,0,5,0,0,4,0,0});
 		assertArrayEquals(new double[]{0,0,0,5,0,0,4,0,0},ai.getQValues(new Board()),0.1);
-		assertEquals(4,ai.getQValue(new Board(), 7),0.1);
-		assertEquals(4,ai.getBestAction(new Board()));
+		assertEquals(4,ai.getQValue(new Board(), 6),0.1);
+		assertEquals(3,ai.getBestAction(new Board()));
 	}
 }
