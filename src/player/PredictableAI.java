@@ -3,6 +3,11 @@ package player;
 import Game.Board;
 import Game.Game;
 
+/**
+ * An AI that always does the lowest available move.
+ * @author I3anaan
+ *
+ */
 public class PredictableAI implements Player {
 
 	@Override

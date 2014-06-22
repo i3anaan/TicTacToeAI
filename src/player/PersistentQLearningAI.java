@@ -5,31 +5,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-
 import Game.Board;
 
+/**
+ * Extension of the QLearningAI.
+ * This extension allows the AI to store and load its knowledge table.
+ * It does not alter the QLearningAI's behavior.
+ * @author I3anaan
+ *
+ */
 public class PersistentQLearningAI extends QLearningAI {
 
 	private boolean save;
-	private boolean load;
 
+	/**
+	 * Constructor
+	 * @param mark	The mark this Player has.
+	 * @param load	Whether or not to load from an existing QValue knowledge HashMap.
+	 * @param save	Whether or not to save to an existing QValue knowledge HashMap.
+	 */
 	public PersistentQLearningAI(char mark, boolean load, boolean save) {
 		super(mark);
 		this.save = save;
-		this.load = load;
 		if (load) {
 			try {
 				knowledge = loadHashMap();
-				System.out.println("Starting values:  "
-						+ Arrays.toString(knowledge.get(new Board())));
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Board movesDoneBoard = new Board();
@@ -41,17 +46,16 @@ public class PersistentQLearningAI extends QLearningAI {
 				movesDone = (int) arr[0];
 			}
 		}
-		System.out.println("MovesDone: " + movesDone);
 	}
 
 	@Override
 	public int doMove(Board oldBoard) {
 		int move = super.doMove(oldBoard);
 		if (save && movesDone % 10000 == 0) {
+			//Save every 10.000 moves
 			try {
 				storeHashMap(knowledge);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -59,6 +63,14 @@ public class PersistentQLearningAI extends QLearningAI {
 		return move;
 	}
 
+	/**
+	 * Loads in an existing QValue knowledge HashMap.
+	 * Loads the file 'QLearningKnowledge.ai'
+	 * @return	The existing QValue knowledge HashMap
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	@SuppressWarnings("unchecked")
 	private HashMap<Board, double[]> loadHashMap() throws IOException,
 			ClassNotFoundException {
 		HashMap<Board, double[]> map;
@@ -72,6 +84,12 @@ public class PersistentQLearningAI extends QLearningAI {
 		return map;
 	}
 
+	/**
+	 * Stores a QValue knowledge HashMap.
+	 * stores in the file 'QLearningKnowledge.ai'
+	 * @param map QValue knowledge HashMap to store.
+	 * @throws IOException
+	 */
 	private void storeHashMap(HashMap<Board, double[]> map) throws IOException {
 		Board movesDoneBoard = new Board();
 		for (int i = 0; i < 9; i++) {
@@ -85,6 +103,6 @@ public class PersistentQLearningAI extends QLearningAI {
 		out.writeObject(map);
 		out.close();
 		fileOut.close();
-		System.out.println("Saved knowledge HashMap");
+		//System.out.println("Saved knowledge HashMap");
 	}
 }

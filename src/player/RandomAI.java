@@ -3,6 +3,11 @@ package player;
 import Game.Board;
 import Game.Game;
 
+/**
+ * An AI that does a random (valid) move.
+ * @author I3anaan
+ *
+ */
 public class RandomAI implements Player{
 
 	public int doMove(Board board){

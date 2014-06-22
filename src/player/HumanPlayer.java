@@ -6,10 +6,18 @@ import java.io.InputStreamReader;
 
 import Game.Board;
 
+/**
+ * A human player.
+ * When this Player gets asked for a move, input is requested on the standard input.
+ * @author I3anaan
+ *
+ */
 public class HumanPlayer implements Player {
 
 	@Override
 	public int doMove(Board board) {
+		System.out.println(board);
+		System.out.print("Enter your move: ");
 		BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		int move = -1;
 		while(move==-1){
