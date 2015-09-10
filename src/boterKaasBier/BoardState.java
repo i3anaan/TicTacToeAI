@@ -40,7 +40,7 @@ public class BoardState {
         if (stack != null) {
             return stack;
         } else {
-            stack = new CardStack(x, y);
+            stack = new CardStack(x, y, this);
             column.put(y, stack);
             return stack;
         }

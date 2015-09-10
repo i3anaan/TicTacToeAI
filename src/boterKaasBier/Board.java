@@ -3,6 +3,8 @@ package boterKaasBier;
 import java.util.ArrayList;
 import java.util.List;
 
+import boterKaasBier.util.Direction;
+
 public class Board {
     private BoardState boardState;
     private Deck deck;
@@ -14,6 +16,22 @@ public class Board {
     
     public boolean isFinished() {
         //TODO;
+        return false;
+    }
+    
+    public boolean isInOpenRow(CardStack base) {
+        Direction[] dirs = new Direction[] { Direction.TOP, Direction.TOP_RIGHT, Direction.RIGHT, Direction.BOTTOM_LEFT };
+        for (Direction dir : dirs) {
+            boolean allOpen = true;
+            for (CardStack stack : base.getTwoWayNeighbours(dir)) {
+                allOpen = allOpen && stack.peek().open;
+            }
+            
+            if (allOpen) {
+                return true;
+            }
+        }
+        
         return false;
     }
     
