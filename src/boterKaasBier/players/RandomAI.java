@@ -1,12 +1,15 @@
-package boterKaasBier;
+package boterKaasBier.players;
 
 import java.util.List;
 
+import boterKaasBier.Board;
+import boterKaasBier.Card;
+import boterKaasBier.CardRange;
+import boterKaasBier.Move;
 import boterKaasBier.CardRange.ComparedToCard;
 
-public interface Player {
-    
-    public default void doGuess(Board board) {
+public class RandomAI implements Player{
+    public void doGuessMove(Board board) {
         List<Move> moves = board.getGuessMoves();
         Move rMove = moves.get((int) (Math.random() * moves.size()));
         CardRange range = new CardRange();
@@ -15,7 +18,7 @@ public interface Player {
         board.doGuessMove(this, rMove.x, rMove.y, range, compared);
     }
     
-    public default void putCards(Board board, Card[] cards) {
+    public void doPutMove(Board board, Card[] cards) {
         for (Card card : cards) {
             List<Move> moves = board.getPutMoves();
             Move rMove = moves.get((int) (Math.random() * moves.size()));

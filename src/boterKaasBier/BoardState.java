@@ -1,6 +1,7 @@
 package boterKaasBier;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,17 +11,24 @@ public class BoardState {
     // row first, then column. (x first, then y)
     private Map<Integer, Map<Integer, CardStack>> boardState;
     private Deck deck;
+    private CardStack lastChanged;
     
+    public CardStack getLastChanged() {
+        return lastChanged;
+    }
+
     public BoardState() {
         boardState = new HashMap<Integer, Map<Integer, CardStack>>();
     }
     
     public BoardState(Deck deck) {
-        for (int r = 1; r < 3; r++) {
+        this();
+        
+        for (int r = 0; r < 3; r++) {
             putCard(deck.getNext(), 0, 0);
-            putCard(deck.getNext(), 0, 1);
-            putCard(deck.getNext(), 0, 2);
-            putCard(deck.getNext(), 1, 2);
+            putCard(deck.getNext(), 1, 0);
+            putCard(deck.getNext(), 2, 0);
+            putCard(deck.getNext(), 2, 1);
             putCard(deck.getNext(), 2, 2);
             putCard(deck.getNext(), 1, 2);
             putCard(deck.getNext(), 0, 2);
@@ -62,6 +70,7 @@ public class BoardState {
     public void putCard(Card card, int x, int y) {
         CardStack stack = getCardStack(x, y);
         stack.push(card);
+        lastChanged = stack;
     }
     
     public Card peekTopCard(int x, int y) {
@@ -73,12 +82,40 @@ public class BoardState {
         }
     }
     
+    //TODO these min/max methods are not fully correct. (for example: should ignore empty stacks).
+    public int getMinX() {
+        return Collections.min(boardState.keySet());
+    }
+    
+    public int getMaxX() {
+        return Collections.max(boardState.keySet());
+    }
+    
+    public int getMinY() {
+        int min = Integer.MAX_VALUE;
+        for (Map<Integer, CardStack> column : boardState.values()) {
+            min = Math.min(min, Collections.min(column.keySet()));
+        }
+        return min;
+    }
+    
+    public int getMaxY() {
+        int max = Integer.MIN_VALUE;
+        for (Map<Integer, CardStack> column : boardState.values()) {
+            max = Math.max(max, Collections.max(column.keySet()));
+        }
+        return max;
+    }
+    
+    /* Currently unused.
     public Card removeTopCard(int x, int y) {
         CardStack stack = getCardStack(x, y);
+        lastChanged = stack;
         if (!stack.isEmpty()) {
             return stack.pop();
         } else {
             return null;
-        }        
+        }
     }
+    */
 }

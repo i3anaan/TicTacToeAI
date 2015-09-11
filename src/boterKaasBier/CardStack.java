@@ -26,6 +26,7 @@ public class CardStack extends Stack<Card> {
         List<CardStack> list = new ArrayList<CardStack>();
         CardStack neighbour = getNeighbour(direction);
         if (!neighbour.isEmpty()) {
+            list.add(neighbour);
             list.addAll(neighbour.getNeighbours(direction));
         } // Else empty list.
         
@@ -36,5 +37,9 @@ public class CardStack extends Stack<Card> {
         List<CardStack> list = getNeighbours(direction);
         list.addAll(getNeighbours(direction.getInverse()));
         return list;
+    }
+    
+    public String toString() {
+        return "S(" + x + ", " + y + ")";
     }
 }

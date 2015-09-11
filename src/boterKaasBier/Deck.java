@@ -1,5 +1,6 @@
 package boterKaasBier;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -7,9 +8,11 @@ import java.util.List;
 public class Deck{
     private List<Card> cards;
     
-    public void Deck() {
-        for (int c = 1; c < 4; c++) {
-            for (int n = 1; n < 13; n++) {
+    public Deck() {
+        cards = new ArrayList<Card>();
+        
+        for (int c = 1; c <= 4; c++) {
+            for (int n = 1; n <= 13; n++) {
                 putLast(new Card(c,n, false));
             }
         }
@@ -24,11 +27,21 @@ public class Deck{
         if (!cards.isEmpty()) {
             return cards.remove(0);
         } else {
-            return null;
+            throw new DeckEmptyException();
         }
+    }
+    
+    public Card getOpenNext() {
+        Card card = getNext();
+        card.open = true;
+        return card;
     }
     
     public void shuffle() {
         Collections.shuffle(cards);
+    }
+    
+    public String toString() {
+        return "Left: " + cards.size() + " cards.";
     }
 }

@@ -3,11 +3,14 @@ package boterKaasBier;
 import java.util.ArrayList;
 import java.util.List;
 
+import boterKaasBier.players.Player;
 import boterKaasBier.util.Direction;
 
 public class Board {
     private BoardState boardState;
     private Deck deck;
+
+    private Player lastPlayer;
     
     public Board() {
         deck = new Deck();
@@ -15,8 +18,7 @@ public class Board {
     }
     
     public boolean isFinished() {
-        //TODO;
-        return false;
+        return isWon() || isDraw();
     }
     
     public boolean isInOpenRow(CardStack base) {
@@ -24,7 +26,8 @@ public class Board {
         for (Direction dir : dirs) {
             boolean allOpen = true;
             for (CardStack stack : base.getTwoWayNeighbours(dir)) {
-                allOpen = allOpen && stack.peek().open;
+                //System.out.println("Checking stack " + stack + " to be open.");
+                allOpen = allOpen && (!stack.isEmpty() && stack.peek().open);
             }
             
             if (allOpen) {
@@ -33,6 +36,26 @@ public class Board {
         }
         
         return false;
+    }
+    
+    public boolean isWon() {
+        return isInOpenRow(boardState.getLastChanged());
+    }
+    
+    public boolean isDraw() {
+        boolean allOpen = true;
+        for (CardStack stack : boardState.getNonEmptyCardStacks()) {
+            allOpen = allOpen && stack.peek().open;
+        }
+        return allOpen;
+    }
+    
+    public Player getWinner() {
+        if (isWon()) {
+            return lastPlayer;
+        } else {
+            return null;
+        }
     }
     
     public List<Move> getGuessMoves() {
@@ -44,6 +67,10 @@ public class Board {
         }
         
         return moves;
+    }
+    
+    public Deck getDeck() {
+        return deck;
     }
     
     public List<Move> getPutMoves() {
@@ -58,15 +85,21 @@ public class Board {
     }
     
     public boolean doGuessMove(Player player, int x, int y, CardRange range, CardRange.ComparedToCard comparedToUnkown) {
+        if (this.isFinished()) {
+            throw new GameAlreadyOverException();
+        }
+        
+        lastPlayer = player;
         CardStack stack = boardState.getCardStack(x, y);
         Card unkown = stack.peek();
         unkown.open = true;
+        //TODO Check if range is valid?
         range.addConstraint(comparedToUnkown, unkown);
-        Card newCard = deck.getNext();
+        Card newCard = deck.getOpenNext();
         boolean succes = range.isInRange(newCard);
         if (succes) {
             stack.pop(); //remove the now flipped card.
-            player.putCards(this, stack.toArray(new Card[0]));
+            player.doPutMove(this, stack.toArray(new Card[0]));
             
             stack.clear();
             stack.push(unkown);
@@ -82,5 +115,25 @@ public class Board {
         CardStack stack = boardState.getCardStack(x, y);
         card.open = !stack.isEmpty() && stack.peek().open;
         stack.push(card);
+    }
+    
+    public void printState() {
+        for (int y = boardState.getMinY(); y < boardState.getMaxY(); y++) {
+            for (int x = boardState.getMinX(); x < boardState.getMaxX(); x++) {
+                String stackChar;
+                CardStack stack = boardState.getCardStack(x, y);
+                if (!stack.isEmpty()) {
+                    if (stack.peek().open) {
+                        stackChar = "X";
+                    } else {
+                        stackChar = stack.size() + "";
+                    }
+                } else {
+                    stackChar = " ";
+                }
+                System.out.print(stackChar);
+            }
+            System.out.println();
+        }
     }
 }
